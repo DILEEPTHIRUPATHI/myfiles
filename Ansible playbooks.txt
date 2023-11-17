@@ -1,0 +1,123 @@
+USE CMDS
+to check agent connection
+#ansible agent -m ping -a root
+
+
+
+==================================================
+We use playbook to install packages & remove packages
+
+---
+ - hosts: agent
+   tasks:
+     - name: install git
+       apt:
+         name: git
+         state: present
+         update_cache: true
+     - name: install pkg curl using package module
+       package:
+         name: curl
+         state: present
+         update_cache: true
+     - name: multiple packages
+       package:
+         name: ['tree','vim']
+         state: present
+         update_cache: true
+     - name: remove multiple package
+       package:
+         name: "{{ item }}"
+         state: absent
+       with_items:
+         - curl
+         - git
+         - vim
+
+=============================
+Install packages multiple OSS
+
+---
+ - hosts: agent
+   tasks:
+     - name: installing tree pkg on ubuntu
+       apt:
+         name: tree
+         state: present
+         update_cache: true
+       when:
+        - ansible_distribution|string == 'Ubuntu'
+     - name: installing tree on centos
+       yum:
+         name: tree
+         state: present
+       when:
+        - ansible_distribution|string == 'CentOS'
+
+
+============================
+Multiple states installations
+
+---
+- hosts: agent
+  tasks:
+    - name: manage packages
+      package:
+        name: "{{ item.name }}"
+        state: "{{ item.state}}"
+      with_items:
+         - { name: tree, state: absent }
+         - { name: nmap, state: present }
+         - { name: git, state: present  }
+         - { name: apache2, state: present }
+
+
+
+=============================
+Playbook of java multiple OS
+
+---
+ - hosts: agent
+   tasks:
+     - name: installing java-11* pkg on CentOS
+       yum:
+         name: java-11*
+         state: present
+         update_cache: true
+       when:
+        - ansible_distribution|string == 'CentOS'
+     - name: installing java-11* pkg on Redhat
+       yum:
+         name: java-11*
+         state: present
+       when:
+        - ansible_distribution|string == 'Redhat'
+     - name: installing java-jdk pkg on Ubuntu
+       apt:
+         name: java-11*
+         state: present
+         update_cache: true
+       when:
+        - ansible_distribution|string == 'Ubuntu'
+
+
+=============================
+Playbook installation  of java
+
+---
+ - hosts: agent
+   tasks:
+     - name: installing default-jdk pkg on Ubuntu
+       apt:
+         name: default-jdk
+         state: present
+         update_cache: true
+       when:
+        - ansible_distribution|string == 'Ubuntu'
+        - name: installing tomcat pkg on Ubuntu
+          apt:
+            name: tomcat
+            state: present
+            update_cache: true
+          when:
+           - ansible_distribution|string == 'Ubuntu'

@@ -1,0 +1,97 @@
+Terraform YMAL file
+
+Terrafrom s3 bkt and server
+============================
+
+provider "aws" {
+    region = "us-east-2"
+}
+
+terraform {
+    bucket "s3"{
+        bucket = "testsreenadh"
+        key = "tfstate/terraform.tfstate"
+        region = "us-east-2"
+    }
+}
+resource "aws_key_pair" "example" {
+    key_name = "test_key"
+    public_key = file("./test.pub)
+}
+resource "aws_instance" "example" {
+    key_name = "aws_key_pair.example.key_name"
+    ami = "ami-08cba41c585e4a2e2"
+    instance_type = "t2.micro"
+    vpc_secutity_group_ids = ["vpc-0afdb309975e7a50d"]
+
+connection {
+    type = "ssh"
+    user = "ec2-user"
+    private_key = file("./test)
+    host = self.public_ip
+    timeout = "1m"
+    agent = false
+}
+provisioner "remote-exce" {
+        inline = [
+            "sudo yum -y install httpd"
+            "sudo service httpd start"
+        ]
+    }
+}
+
+
+Ec2connect and variables
+==========================
+main.tf
+
+provider "aws" {
+    region = var.region
+}
+resource "aws_instance" "web" {
+    ami = var.ami
+    instance_type = var.instance_type
+    
+    tags = {
+      Name = var.name[0]
+    }
+}
+resource "aws_s3_bucket" "testbkt" {
+    bucket = "mytftestbkt"
+    
+    tags = {
+        Name = "my bucket"
+    }
+}
+resource "aws_instance" "instance" { 
+    ami = var.ami
+    instance_type = var.instance_type
+
+    tags = {
+    Name = var.name[1]
+    }
+}
+
+
+Varible.tf
+
+variable "region" {
+    type = string
+    default = "us-east-2"
+}
+variable "ami" {
+    type = string
+    default = "ami-08cba41c585e4a2e2"
+}
+variable "name" {
+    type = list
+    default = ["sreenadh", "helloworld", "raavan"]
+}
+variable "instance_type" {
+    type = string
+    default = "t2.micro"
+}
+
+
+
+
