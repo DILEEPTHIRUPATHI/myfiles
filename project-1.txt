@@ -1,0 +1,60 @@
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ ls
+Dockerfile  README.md         docker-compose.yml    ecs-jenkins-demo.template      newfile.txt  php-fpm.conf  www/
+LICENSE     docker-cloud.yml  ecs-cluster.template  ecs-jenkins-demo.template.old  nginx.conf   taskdef.json
+
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ vi ecs-cluster.template
+
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ aws --version
+aws-cli/2.13.30 Python/3.11.6 Windows/10 exe/AMD64 prompt/off
+
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ aws cloudformation create-stack --template-body file://ecs-cluster.template --stack-name EcsClusterStack --capabilities CAPABILITY_IAM --tags Key=Name,Value=ECS --region us-east-1 --parameters ParameterKey=KeyName,ParameterValue=aws ParameterKey=EcsCluster,ParameterValue=getting-started ParameterKey=AsgMaxSize,ParameterValue=2
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:692654537595:stack/EcsClusterStack/7c4b4670-7f85-11ee-89ea-0e6082442815"
+}
+
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ vi ecs-jekins
+ecs-cluster.template           ecs-jenkins-demo.template      ecs-jenkins-demo.template.old
+
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ vi ecs-jenkins-demo.template
+
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ aws cloudformation create-stack --template-body file://ecs-jenkins-demo.template --stack-name JenkinsStack --capabilities CAPABILITY_IAM --tags Key=Name,Value=Jenkins --region us-east-1 --parameters ParameterKey=EcsStackName,ParameterValue=EcsClusterStack
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:692654537595:stack/JenkinsStack/b8ff5dc0-7f87-11ee-8dfd-0ad917d1db03"
+}
+
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ aws ecr create-repository --repository-name hello-world --region us-east-1
+{
+    "repository": {
+        "repositoryArn": "arn:aws:ecr:us-east-1:692654537595:repository/hello-world",
+        "registryId": "692654537595",
+        "repositoryName": "hello-world",
+        "repositoryUri": "692654537595.dkr.ecr.us-east-1.amazonaws.com/hello-world",
+        "createdAt": "2023-11-10T10:44:06+05:30",
+        "imageTagMutability": "MUTABLE",
+        "imageScanningConfiguration": {
+            "scanOnPush": false
+        },
+        "encryptionConfiguration": {
+            "encryptionType": "AES256"
+        }
+    }
+}
+
+
+
+
+#aws configuration process:
+Dileepthirupathi@DESKTOP-DSP MINGW64 ~/Desktop/hello-world (master)
+$ aws configure
+AWS Access Key ID [****************Y55K]: AKIA2CRLNPN5ZWJDLIV6
+AWS Secret Access Key [****************TITM]: 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
+Default region name [us-east-2]: us-east-1
+Default output format [json]:
