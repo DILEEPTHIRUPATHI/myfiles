@@ -1,0 +1,92 @@
+Promethues Installation Proces
+Ubuntu linux History 
+------------------------------
+ 1  sudo mkdir /var/lib/prometheus
+    2  sudo mkdir -p /etc/prometheus/${i};
+    3  sudo apt update
+    4  sudo apt -y install wget curl vim
+    5  mkdir -p /tmp/prometheus && cd /tmp/prometheus
+    6  curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -qi -
+    7  tar xvf prometheus*.tar.gz
+    8  ls
+    9  cd prometheus-2.48.0.linux-amd64/
+   10  ls
+   11  sudo mv prometheus promtool /usr/local/bin/
+   12  ls
+   13  sudo mv prometheus.yml /etc/prometheus/prometheus.yml
+   14  ls
+   15  sudo mv consoles/ console_libraries/ /etc/prometheus/
+   16  ls
+   17  cd $HOME
+   18  sudo vi /etc/prometheus/prometheus.yml
+   19  sudo tee /etc/systemd/system/prometheus.service<<EOF
+   20  [Unit]
+   21  Description=Prometheus
+   22  Documentation=https://prometheus.io/docs/introduction/overview/
+   23  Wants=network-online.target
+   24  After=network-online.target
+   25  [Service]
+   26  Type=simple
+   27  User=root
+   28  Group=root
+   29  ExecReload=/bin/kill -HUP \$MAINPID
+   30  ExecStart=/usr/local/bin/prometheus   --config.file=/etc/prometheus/prometheus.yml   --storage.tsdb.path=/var/lib/prometheus   --web.console.templates=/etc/prometheus/consoles   --web.console.libraries=/etc/prometheus/console_libraries   --web.listen-address=0.0.0.0:9090   --web.external-url=
+   31  SyslogIdentifier=prometheus
+   32  Restart=always
+   33  [Install]
+   34  WantedBy=multi-user.target
+   35  EOF
+   36  ls
+   37  sudo chown -R prometheus:prometheus /etc/prometheus/${i};
+   38  sudo chmod -R 775 /etc/prometheus/${i};
+   39  sudo chown -R prometheus:prometheus /etc/prometheus/${i};
+   40  useradd prometheus
+   41  groupadd prometheus
+   42  sudo chown -R prometheus:prometheus /etc/prometheus/${i};
+   43  sudo chmod -R 775 /etc/prometheus/${i};
+   44  sudo chown -R prometheus:prometheus /var/lib/prometheus/
+   45  sudo systemctl daemon-reload
+   46  sudo systemctl start prometheus
+   47  sudo systemctl enable prometheus
+   48  systemctl status prometheus
+   49  ifconfig
+   50  apt install net-tools
+   51  ifconfig
+   52  ls
+   53  cd /etc/prometheus/
+   54  ls
+   55  wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+   56  tar xvf node_exporter-1.3.1.linux-amd64.tar.gz
+   57  cd node_exporter-1.3.1.linux-amd64
+   58  sudo cp node_exporter /usr/local/bin
+   59  # Exit current directory
+   60  cd ..
+   61  # Remove the extracted directory
+   62  rm -rf ./node_exporter-1.3.1.linux-amd64
+   63  ls
+   64  sudo useradd --no-create-home --shell /bin/false node_exporter
+   65  sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
+   66  sudo vi /etc/systemd/system/node_exporter.service
+   67  sudo systemctl daemon-reload
+   68  sudo systemctl enable node_exporter
+   69  sudo systemctl start node_exporter
+   70  ls
+   71  vi prometheus.yml
+   72  systemctl restart prometheus.service
+   73  apt update
+   74  https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/
+   75  sudo apt-get install -y apt-transport-https software-properties-common wget
+   76  sudo mkdir -p /etc/apt/keyrings/
+   77  wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+   78  echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+   79  echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com beta main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+   80  # Updates the list of available packages
+   81  sudo apt-get update
+   82  # Installs the latest OSS release:
+   83  sudo apt-get install grafana
+   84  sudo apt-get install grafana-enterprise
+   85  systemctl status grafana-server.service
+   86  systemctl start grafana-server.service
+   87  systemctl enable grafana-server.service
+   88  systemctl status grafana-server.service
+   89  history
